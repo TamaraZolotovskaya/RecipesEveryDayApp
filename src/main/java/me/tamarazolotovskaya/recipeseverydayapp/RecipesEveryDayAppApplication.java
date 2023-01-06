@@ -10,4 +10,5 @@ public class RecipesEveryDayAppApplication {
         SpringApplication.run(RecipesEveryDayAppApplication.class, args);
     }
 
+
 }
