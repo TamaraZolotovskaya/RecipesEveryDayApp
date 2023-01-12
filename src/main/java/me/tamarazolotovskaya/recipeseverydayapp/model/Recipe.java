@@ -9,10 +9,11 @@ import java.util.List;
 
 @Data
 public class Recipe {
-@NonNull private String title;
-private int cookingTime;
-private List<Ingredient> ingredients = new ArrayList<>();
-private List<String> steps = new ArrayList<>();
+    @NonNull
+    private String title;
+    private int cookingTime;
+    private List<Ingredient> ingredients = new ArrayList<>();
+    private List<String> steps = new ArrayList<>();
 
     public Recipe(@NonNull String title, int cookingTime, List<Ingredient> ingredients, List<String> steps) {
         this.title = title;
@@ -22,7 +23,9 @@ private List<String> steps = new ArrayList<>();
     }
 
     public void setCookingTime(int cookingTime) {
-        if(cookingTime<0){cookingTime = Math.abs(cookingTime);}
+        if (cookingTime < 0) {
+            cookingTime = Math.abs(cookingTime);
+        }
         this.cookingTime = cookingTime;
     }
 }

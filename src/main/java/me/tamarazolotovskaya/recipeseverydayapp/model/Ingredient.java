@@ -4,18 +4,22 @@ import lombok.*;
 
 @Data
 public class Ingredient {
-    @NonNull private String title;
-private int quantity;
-private String unit;
+    @NonNull
+    private String title;
+    private int quantity;
+    private String unit;
 
-    public void setDuration(int quantity) {
-        if(quantity<0){quantity=Math.abs(quantity);}
+    public void setQuantity(int quantity) {
+        if (quantity < 0) {
+            quantity = Math.abs(quantity);
+        }
         this.quantity = quantity;
     }
 
+
     public Ingredient(@NonNull String title, int quantity, String unit) {
         this.title = title;
-        setDuration(quantity);
+        setQuantity(quantity);
         this.unit = unit;
     }
 }
