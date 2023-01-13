@@ -1,6 +1,7 @@
 package me.tamarazolotovskaya.recipeseverydayapp.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class Recipe {
     @NonNull
     private String title;

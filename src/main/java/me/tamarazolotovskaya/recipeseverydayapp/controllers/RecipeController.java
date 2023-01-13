@@ -53,7 +53,6 @@ public class RecipeController {
         int id = recipeService.addRecipe(recipe);
         return ResponseEntity.ok().body(id);
     }
-
     @GetMapping("/{id}")
     @Operation(
             summary = "Получение рецепта по id"
