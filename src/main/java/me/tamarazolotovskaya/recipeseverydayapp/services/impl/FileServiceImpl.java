@@ -3,11 +3,15 @@ package me.tamarazolotovskaya.recipeseverydayapp.services.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.tamarazolotovskaya.recipeseverydayapp.services.FileService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -34,7 +38,6 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String readFromFile(String fileName) {
-
         try {
             return Files.readString(Path.of(dataFilepath, fileName));
         }
@@ -43,6 +46,18 @@ public class FileServiceImpl implements FileService {
         }
         catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void uploadFile(MultipartFile file, String filename) throws IOException {
+        Path filePath = Path.of(dataFilepath, filename);
+        Files.deleteIfExists(filePath);
+        File newFile = new File(dataFilepath + "/" + filename);
+
+        try(FileOutputStream fos = new FileOutputStream(newFile);
+            InputStream is = file.getInputStream()){
+            IOUtils.copy(is,fos);
         }
     }
 

@@ -31,6 +31,13 @@ public class FilesController {
     @Value("${name.of.ingredients.data.file}")
     private String ingredientDataFileName;
 
+    private final FileService fileService;
+
+    public FilesController(FileService fileService) {
+        this.fileService = fileService;
+    }
+
+
     @Operation(
             summary = "Скачать все рецепты в виде json-файла"
     )
@@ -53,21 +60,11 @@ public class FilesController {
             summary = "Принимает json-файл с рецептами и заменяет сохраненный на жестком диске файл на новый"
     )
     @PostMapping(value = "/recipes/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadRecipesFile(@RequestParam MultipartFile file) throws IOException {
-        Path filePath = Path.of(dataFilepath, recipeDataFileName);
+    public ResponseEntity<Void> uploadRecipesFile(@RequestParam MultipartFile file) {
         try {
-            Files.deleteIfExists(filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-       File newFile = new File(dataFilepath + "/" + recipeDataFileName);
-
-        try(FileOutputStream fos = new FileOutputStream(newFile);
-            InputStream is = file.getInputStream()){
-            IOUtils.copy(is,fos);
+            fileService.uploadFile(file, recipeDataFileName);
             return ResponseEntity.ok().build();
-        }
-         catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -77,25 +74,15 @@ public class FilesController {
             summary = "Принимает json-файл с ингредиентами и заменяет сохраненный на жестком диске файл на новый"
     )
     @PostMapping(value = "/ingredients/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadIngredientsFile(@RequestParam MultipartFile file)  {
-        Path filePath = Path.of(dataFilepath,ingredientDataFileName);
+    public ResponseEntity<Void> uploadIngredientsFile(@RequestParam MultipartFile file) {
         try {
-            Files.deleteIfExists(filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        File newFile = new File(dataFilepath + "/" + ingredientDataFileName);
-        try(FileOutputStream fos = new FileOutputStream(newFile);
-            InputStream is = file.getInputStream()){
-            IOUtils.copy(is,fos);
+            fileService.uploadFile(file, ingredientDataFileName);
             return ResponseEntity.ok().build();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
-
 
 
 }

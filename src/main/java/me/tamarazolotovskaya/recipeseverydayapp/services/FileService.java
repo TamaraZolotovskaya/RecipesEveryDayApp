@@ -1,6 +1,9 @@
 package me.tamarazolotovskaya.recipeseverydayapp.services;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
+import java.io.IOException;
 
 public interface FileService {
 
@@ -10,4 +13,5 @@ public interface FileService {
     String readFromFile(String fileName);
 
 
+    void uploadFile(MultipartFile file, String filename) throws IOException;
 }
