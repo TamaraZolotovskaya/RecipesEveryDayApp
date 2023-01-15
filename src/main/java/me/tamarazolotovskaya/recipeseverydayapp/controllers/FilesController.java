@@ -17,6 +17,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static java.nio.file.StandardOpenOption.CREATE_NEW;
+
 @RestController
 @RequestMapping("/files")
 @Tag(name = "Передача файлов по HTTP", description = "API для работы с файлами")
@@ -51,16 +53,18 @@ public class FilesController {
             summary = "Принимает json-файл с рецептами и заменяет сохраненный на жестком диске файл на новый"
     )
     @PostMapping(value = "/recipes/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadRecipesFile(@RequestParam MultipartFile file)  {
-        Path filePath = Path.of(dataFilepath,recipeDataFileName);
+    public ResponseEntity<Void> uploadRecipesFile(@RequestParam MultipartFile file) throws IOException {
+        Path filePath = Path.of(dataFilepath, recipeDataFileName);
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        File newFile = new File(dataFilepath + "/" + recipeDataFileName);
-        try(FileOutputStream fos = new FileOutputStream(newFile)){
-            IOUtils.copy(file.getInputStream(),fos);
+       File newFile = new File(dataFilepath + "/" + recipeDataFileName);
+
+        try(FileOutputStream fos = new FileOutputStream(newFile);
+            InputStream is = file.getInputStream()){
+            IOUtils.copy(is,fos);
             return ResponseEntity.ok().build();
         }
          catch (IOException e) {
@@ -74,15 +78,16 @@ public class FilesController {
     )
     @PostMapping(value = "/ingredients/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> uploadIngredientsFile(@RequestParam MultipartFile file)  {
-        Path filePath = Path.of(dataFilepath,file.getOriginalFilename());
+        Path filePath = Path.of(dataFilepath,ingredientDataFileName);
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
         File newFile = new File(dataFilepath + "/" + ingredientDataFileName);
-        try(FileOutputStream fos = new FileOutputStream(newFile)){
-            IOUtils.copy(file.getInputStream(),fos);
+        try(FileOutputStream fos = new FileOutputStream(newFile);
+            InputStream is = file.getInputStream()){
+            IOUtils.copy(is,fos);
             return ResponseEntity.ok().build();
         }
         catch (IOException e) {
@@ -90,5 +95,7 @@ public class FilesController {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+
 
 }
