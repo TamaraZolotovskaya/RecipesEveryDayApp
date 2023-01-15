@@ -6,8 +6,10 @@ import me.tamarazolotovskaya.recipeseverydayapp.services.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 @Service
@@ -29,14 +31,21 @@ public class FileServiceImpl implements FileService {
             e.printStackTrace();
         }
     }
+
     @Override
     public String readFromFile(String fileName) {
+
         try {
             return Files.readString(Path.of(dataFilepath, fileName));
-        } catch (IOException e) {
+        }
+        catch(NoSuchFileException e){
+            return "{}";
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 
 
 

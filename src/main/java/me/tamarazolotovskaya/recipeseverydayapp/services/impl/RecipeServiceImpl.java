@@ -37,10 +37,11 @@ public class RecipeServiceImpl implements RecipeService {
 
     @PostConstruct
     private void init() {
+
         String json = fileService.readFromFile(recipeDataFileName);
         try {
-            ingredientMap =
-                    new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Ingredient>>() {
+            recipeMap =
+                    new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Recipe>>() {
                     });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

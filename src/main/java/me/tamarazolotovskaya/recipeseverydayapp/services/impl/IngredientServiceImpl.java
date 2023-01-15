@@ -39,7 +39,6 @@ public class IngredientServiceImpl implements IngredientService {
             e.printStackTrace();
         }
     }
-
     @Override
     public int addIngredient(Ingredient ingredient) {
         ingredientMap.put(++ingredientId, ingredient);
