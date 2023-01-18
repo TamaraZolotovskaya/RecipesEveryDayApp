@@ -3,6 +3,7 @@ package me.tamarazolotovskaya.recipeseverydayapp.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import me.tamarazolotovskaya.recipeseverydayapp.services.FileService;
+import me.tamarazolotovskaya.recipeseverydayapp.services.RecipeService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,17 +34,18 @@ public class FilesController {
     private String ingredientDataFileName;
 
     private final FileService fileService;
+    private final RecipeService recipeService;
 
-    public FilesController(FileService fileService) {
+    public FilesController(FileService fileService, RecipeService recipeService) {
         this.fileService = fileService;
+        this.recipeService = recipeService;
     }
-
 
     @Operation(
             summary = "Скачать все рецепты в виде json-файла"
     )
-    @GetMapping(value = "/recipes/download")
-    public ResponseEntity<InputStreamResource> downloadRecipesFile() throws IOException {
+    @GetMapping(value = "/recipes/downloadjson")
+    public ResponseEntity<InputStreamResource> downloadRecipesFileJson() throws IOException {
         File file = new File(dataFilepath + "/" + recipeDataFileName);
         if (file.exists()) {
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
@@ -60,29 +63,51 @@ public class FilesController {
             summary = "Принимает json-файл с рецептами и заменяет сохраненный на жестком диске файл на новый"
     )
     @PostMapping(value = "/recipes/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadRecipesFile(@RequestParam MultipartFile file) {
+    public ResponseEntity<Object> uploadRecipesFileJson(@RequestParam MultipartFile file) {
         try {
             fileService.uploadFile(file, recipeDataFileName);
             return ResponseEntity.ok().build();
         } catch (IOException e) {
             e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.toString());
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @Operation(
             summary = "Принимает json-файл с ингредиентами и заменяет сохраненный на жестком диске файл на новый"
     )
     @PostMapping(value = "/ingredients/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadIngredientsFile(@RequestParam MultipartFile file) {
+    public ResponseEntity<Object> uploadIngredientsFileJson(@RequestParam MultipartFile file) {
         try {
             fileService.uploadFile(file, ingredientDataFileName);
             return ResponseEntity.ok().build();
         } catch (IOException e) {
             e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.toString());
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+    @Operation(
+            summary = "Скачать все рецепты в виде файла txt"
+    )
+    @GetMapping(value = "/recipes/downloadTxt")
+    public ResponseEntity<Object> downloadRecipesFile() {
+        try {
+            Path path = recipeService.createRecipeFile();
+            if (Files.size(path) == 0) {
+                return ResponseEntity.noContent().build();
+            }
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(path.toFile()));
+            path.toFile().deleteOnExit();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .contentLength(Files.size(path))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"ricipesList.txt\"")
+                    .body(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(e.toString());
+        }
+    }
 
 }

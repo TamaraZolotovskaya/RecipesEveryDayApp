@@ -30,4 +30,6 @@ public class Recipe {
         }
         this.cookingTime = cookingTime;
     }
+
+
 }

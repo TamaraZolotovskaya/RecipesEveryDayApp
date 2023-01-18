@@ -47,12 +47,13 @@ public class RecipeController {
             }
     )
     public ResponseEntity<Integer> addRecipe(@RequestBody Recipe recipe) {
-        if (validateService.isNotValid(recipe)){
-           return ResponseEntity.badRequest().build();
+        if (validateService.isNotValid(recipe)) {
+            return ResponseEntity.badRequest().build();
         }
         int id = recipeService.addRecipe(recipe);
         return ResponseEntity.ok().body(id);
     }
+
     @GetMapping("/{id}")
     @Operation(
             summary = "Получение рецепта по id"
@@ -182,7 +183,7 @@ public class RecipeController {
 
     @PutMapping("/ingredients")
     @Operation(
-            summary = "Поиск рецептов по нескольким ингредиентам"
+            summary = "Поиск рецептов по нескольким названиям ингредиентов"
     )
     @ApiResponses(
             value = {
@@ -204,6 +205,5 @@ public class RecipeController {
             return ResponseEntity.notFound().build();
         } else return ResponseEntity.ok().body(recipeWithIngredients);
     }
-
 
 }

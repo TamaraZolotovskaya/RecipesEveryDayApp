@@ -40,11 +40,9 @@ public class FileServiceImpl implements FileService {
     public String readFromFile(String fileName) {
         try {
             return Files.readString(Path.of(dataFilepath, fileName));
-        }
-        catch(NoSuchFileException e){
+        } catch (NoSuchFileException e) {
             return "{}";
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -55,13 +53,20 @@ public class FileServiceImpl implements FileService {
         Files.deleteIfExists(filePath);
         File newFile = new File(dataFilepath + "/" + filename);
 
-        try(FileOutputStream fos = new FileOutputStream(newFile);
-            InputStream is = file.getInputStream()){
-            IOUtils.copy(is,fos);
+        try (FileOutputStream fos = new FileOutputStream(newFile);
+             InputStream is = file.getInputStream()) {
+            IOUtils.copy(is, fos);
         }
     }
 
-
+    @Override
+    public Path CreateTempFile(String suffix) {
+        try {
+            return Files.createTempFile(Path.of(dataFilepath), "tempfile", suffix);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 }

@@ -11,12 +11,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.awt.*;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static me.tamarazolotovskaya.recipeseverydayapp.services.impl.IngredientServiceImpl.ingredientMap;
 
@@ -43,6 +48,7 @@ public class RecipeServiceImpl implements RecipeService {
             recipeMap =
                     new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Recipe>>() {
                     });
+            recipeId = recipeMap.size();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -121,6 +127,33 @@ public class RecipeServiceImpl implements RecipeService {
             }
         }
         return recipeWithIngredients;
+    }
+
+    private Font bold = new Font("", Font.BOLD, 10);
+
+    @Override
+    public Path createRecipeFile() throws IOException {
+        Path path = fileService.CreateTempFile("list");
+        for (Recipe recipe :
+                recipeMap.values()) {
+            try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+                writer.append(recipe.getTitle() + "\n" +
+                        "Время приготовления: " +
+                        recipe.getCookingTime() + " минут" + "\n" +
+                        "Ингредиенты: " + "\n" +
+                        recipe.getIngredients().toString().
+                                replace("[", "").
+                                replace("]", "").
+                                replace(", ", "\n") + "\n" +
+                        "Инструкция приготовления: " + "\n" + " " +
+                        recipe.getSteps().toString().
+                                replace("[", "").
+                                replace("]", "").
+                                replace(".,", ".\n")
+                        + "\n");
+            }
+        }
+        return path;
     }
 
 }

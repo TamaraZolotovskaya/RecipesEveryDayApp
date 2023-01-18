@@ -3,6 +3,8 @@ package me.tamarazolotovskaya.recipeseverydayapp.services;
 import me.tamarazolotovskaya.recipeseverydayapp.model.Ingredient;
 import me.tamarazolotovskaya.recipeseverydayapp.model.Recipe;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public interface RecipeService {
@@ -20,4 +22,6 @@ public interface RecipeService {
     ArrayList<Recipe> getRecipeByIngredient(int indredientId);
 
     ArrayList<Recipe> getRecipeByIngredientList(ArrayList<String> ingredients);
+
+    Path createRecipeFile() throws IOException;
 }

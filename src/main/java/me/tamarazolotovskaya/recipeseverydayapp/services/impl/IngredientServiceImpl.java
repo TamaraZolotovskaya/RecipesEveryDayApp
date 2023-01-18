@@ -35,6 +35,7 @@ public class IngredientServiceImpl implements IngredientService {
             ingredientMap =
                     new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Ingredient>>() {
                     });
+            ingredientId=ingredientMap.size();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

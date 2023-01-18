@@ -23,4 +23,10 @@ public class Ingredient {
         setQuantity(quantity);
         this.unit = unit;
     }
+
+    @Override
+    public String toString() {
+        return
+                title + " — " + quantity + " " + unit;
+    }
 }
